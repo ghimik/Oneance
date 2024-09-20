@@ -18,9 +18,18 @@ import java.util.List;
 @Builder
 public class User implements UserDetails {
 
-    public enum UserRole {
-        INVESTOR,
-        ADMINISTRATOR
+
+    @RequiredArgsConstructor
+    public enum UserRole implements GrantedAuthority {
+        INVESTOR("INVESTOR"),
+        ADMINISTRATOR("ADMINISTRATOR");
+
+        private final String role;
+
+        @Override
+        public String getAuthority() {
+            return role;
+        }
     }
 
     @Id
@@ -59,7 +68,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(role);
     }
 
     @Override
@@ -67,10 +76,6 @@ public class User implements UserDetails {
         return this.passwordHash;
     }
 
-    @Override
-    public String getUsername() {
-        return this.username;
-    }
 }
 
 
