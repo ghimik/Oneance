@@ -1,5 +1,6 @@
 package com.petproject.oneance.service;
 
+import com.petproject.oneance.dto.response.AuthorizationResponse;
 import com.petproject.oneance.security.jwt.JwtTokenGenerator;
 import com.petproject.oneance.security.jwt.JwtTokenVerifier;
 import com.petproject.oneance.util.KeyReader;
@@ -14,8 +15,6 @@ import java.util.Objects;
 
 @Service
 public class JwtService {
-
-    public final String AUTORIZATION = "Authorization";
 
     private final String PRIVATE_KEY_PATH;
 
@@ -45,9 +44,9 @@ public class JwtService {
     }
 
 
-    public Map<String, String> generateHeader(UserDetails user) {
+    public AuthorizationResponse generateHeader(UserDetails user) {
         String token = generator.generate(user);
-        return Map.of(AUTORIZATION, "Bearer" + token);
+        return new AuthorizationResponse(token);
     }
 
 }

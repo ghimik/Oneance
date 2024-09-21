@@ -25,13 +25,23 @@ public class SecurityConfig {
     }
 
 
+    // cors, csrf api
+    // sessions into repo
+    // remember me
+    // refresh token
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return
         http
-                .sessionManagement(session
-                        -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(cors -> cors.disable())
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests( auth -> auth
+                        .requestMatchers("/api/auth/*").permitAll()
+                        .anyRequest().authenticated()
 
+                )
                 .build();
     }
 

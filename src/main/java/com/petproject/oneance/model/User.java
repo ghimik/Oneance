@@ -19,6 +19,7 @@ import java.util.List;
 public class User implements UserDetails {
 
 
+    @Getter
     @RequiredArgsConstructor
     public enum UserRole implements GrantedAuthority {
         INVESTOR("INVESTOR"),
@@ -47,8 +48,8 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Convert(converter = UserRoleConverter.class)
+    @Column(name = "role",columnDefinition = "user_role", nullable = false)
     private UserRole role;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMPTZ")
