@@ -32,6 +32,7 @@ public class AuthService {
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword()))
             throw new AuthException("Incorrect password");
 
+        System.out.println("DB layer: user found!");
         return jwtService.generateHeader(user);
     }
 

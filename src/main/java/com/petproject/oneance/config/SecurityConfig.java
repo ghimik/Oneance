@@ -1,5 +1,8 @@
 package com.petproject.oneance.config;
 
+import com.petproject.oneance.security.filter.JwtAuthFilter;
+import com.petproject.oneance.service.AuthService;
+import com.petproject.oneance.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +17,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.util.logging.Filter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,13 +37,16 @@ public class SecurityConfig {
     // remember me
     // refresh token
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   @Autowired JwtAuthFilter jwtAuthFilter)
+            throws Exception {
         return
         http
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(cors -> cors.disable())
                 .csrf(csrf -> csrf.disable())
+                .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers("/api/auth/*").permitAll()
                         .anyRequest().authenticated()
@@ -45,4 +55,8 @@ public class SecurityConfig {
                 .build();
     }
 
+    @Bean
+    public OncePerRequestFilter jwtFilter(@Autowired JwtService authService) {
+        return new JwtAuthFilter(authService);
+    }
 }

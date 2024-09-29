@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/api/auth/login")
+    @PostMapping("login")
     public ResponseEntity<Void> login
             (@RequestBody AuthorizationRequestDto requestDto) {
 
@@ -36,7 +36,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/api/auth/signup")
+    @PostMapping("signup")
     public ResponseEntity<Void> signup(@RequestBody SignUpRequestDto requestDto) {
 
         try {

@@ -26,6 +26,7 @@ public class JwtTokenGenerator {
         return Jwts.builder()
                 .claim("name", user.getUsername())
                 .claim("authorities", user.getAuthorities())
+                .subject(user.getUsername())
                 .issuedAt(Date.from(now))
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MILS))
                 .signWith(privateKey)

@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class AuthorizationResponse {
 
-    public final String BEARER = "Bearer ";
+    public final static String BEARER = "Bearer ";
 
     private final String headerName = "Authorization";
 

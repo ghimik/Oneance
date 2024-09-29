@@ -4,13 +4,12 @@ import com.petproject.oneance.dto.response.AuthorizationResponse;
 import com.petproject.oneance.security.jwt.JwtTokenGenerator;
 import com.petproject.oneance.security.jwt.JwtTokenVerifier;
 import com.petproject.oneance.util.KeyReader;
+import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -31,7 +30,7 @@ public class JwtService {
                         .getResource("keys/public_key.pem"))
                 .toURI())
                 .toString();
-}
+    }
 
 
     private final JwtTokenGenerator generator;
@@ -46,7 +45,12 @@ public class JwtService {
 
     public AuthorizationResponse generateHeader(UserDetails user) {
         String token = generator.generate(user);
+        System.out.println("Token generated: " + token);
         return new AuthorizationResponse(token);
+    }
+
+    public Claims validateToken(String token) {
+        return verifier.verify(token);
     }
 
 }
