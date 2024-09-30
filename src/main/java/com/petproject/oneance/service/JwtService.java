@@ -20,15 +20,15 @@ public class JwtService {
     private final String PUBLIC_KEY_PATH;
 
     {
-    PRIVATE_KEY_PATH = Paths.get(Objects.requireNonNull(getClass()
-                        .getClassLoader()
-                        .getResource("keys/private_key.pem"))
-                .toURI())
+        PRIVATE_KEY_PATH = Paths.get(Objects.requireNonNull(getClass()
+                                .getClassLoader()
+                                .getResource("keys/private_key.pem"))
+                        .toURI())
                 .toString();
-    PUBLIC_KEY_PATH = Paths.get(Objects.requireNonNull(getClass()
-                        .getClassLoader()
-                        .getResource("keys/public_key.pem"))
-                .toURI())
+        PUBLIC_KEY_PATH = Paths.get(Objects.requireNonNull(getClass()
+                                .getClassLoader()
+                                .getResource("keys/public_key.pem"))
+                        .toURI())
                 .toString();
     }
 
@@ -43,14 +43,21 @@ public class JwtService {
     }
 
 
-    public AuthorizationResponse generateHeader(UserDetails user) {
+    public String generateToken(UserDetails user) {
         String token = generator.generate(user);
         System.out.println("Token generated: " + token);
-        return new AuthorizationResponse(token);
+        return token;
     }
 
     public Claims validateToken(String token) {
         return verifier.verify(token);
     }
+
+    public String generateRefresh(UserDetails user) {
+        String refreshToken = generator.generateRefresh(user);
+        System.out.println("Refresh Token generated: " + refreshToken);
+        return refreshToken;
+    }
+
 
 }

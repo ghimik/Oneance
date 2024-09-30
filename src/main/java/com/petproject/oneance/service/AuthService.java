@@ -1,12 +1,18 @@
 package com.petproject.oneance.service;
 
+import com.petproject.oneance.dto.request.AuthenticationResponse;
 import com.petproject.oneance.dto.request.AuthorizationRequestDto;
 import com.petproject.oneance.dto.request.SignUpRequestDto;
+import com.petproject.oneance.dto.request.TokenRequest;
 import com.petproject.oneance.dto.response.AuthorizationResponse;
 import com.petproject.oneance.model.User;
 import com.petproject.oneance.repo.UserRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +30,9 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     public AuthorizationResponse authorize(AuthorizationRequestDto requestDto)
             throws AuthException {
         User user = userRepository.findByUsername(requestDto.getUsername());
@@ -33,10 +42,10 @@ public class AuthService {
             throw new AuthException("Incorrect password");
 
         System.out.println("DB layer: user found!");
-        return jwtService.generateHeader(user);
+        return new AuthorizationResponse(jwtService.generateToken(user));
     }
 
-    public AuthorizationResponse signup(SignUpRequestDto  requestDto) {
+    public AuthorizationResponse signup(SignUpRequestDto requestDto) {
         User user = User
                 .builder()
                 .username(requestDto.getUsername())
@@ -48,8 +57,23 @@ public class AuthService {
                 .build();
 
         userRepository.saveUserWithRole(user);
-        return jwtService.generateHeader(user);
+        return new AuthorizationResponse(jwtService.generateToken(user));
 
     }
+
+    public AuthenticationResponse refresh(TokenRequest tokenRequest) {
+        Claims claims = jwtService.validateToken(tokenRequest.getRefreshToken());
+        String username = claims.getSubject();
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String newAccessToken = jwtService.generateToken(userDetails);
+        String newRefreshToken = jwtService.generateRefresh(userDetails);
+
+        return new AuthenticationResponse(
+                newRefreshToken,
+                newAccessToken
+        );
+    }
+
 
 }

@@ -1,30 +1,28 @@
 package com.petproject.oneance.security.jwt;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.security.PrivateKey;
-import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
+
+// TODO разные ключи для токенов
 
 @RequiredArgsConstructor
 public class JwtTokenGenerator {
 
     private final PrivateKey privateKey;
 
-    private final Integer EXPIRATION_TIME_MILS = 1000 * 60 * 30;
+    private final Integer EXPIRATION_TIME_MILS = 1000 * 60 * 15;
+
+    private final Integer REFRESH_EXPIRATION_TIME_MILS = 1000 * 60 * 24 * 7;
+
 
     public String generate(UserDetails user) {
         Instant now = Clock.systemUTC().instant();
-
-
 
         return Jwts.builder()
                 .claim("name", user.getUsername())
@@ -35,5 +33,17 @@ public class JwtTokenGenerator {
                 .signWith(privateKey)
                 .compact();
     }
+
+    public String generateRefresh(UserDetails user) {
+        Instant now = Clock.systemUTC().instant();
+
+        return Jwts.builder()
+                .subject(user.getUsername())
+                .issuedAt(Date.from(now))
+                .expiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION_TIME_MILS))
+                .signWith(privateKey)
+                .compact();
+    }
+
 
 }
