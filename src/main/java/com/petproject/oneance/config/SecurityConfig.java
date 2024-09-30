@@ -41,18 +41,19 @@ public class SecurityConfig {
                                                    @Autowired JwtAuthFilter jwtAuthFilter)
             throws Exception {
         return
-        http
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> cors.disable())
-                .csrf(csrf -> csrf.disable())
-                .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests( auth -> auth
-                        .requestMatchers("/api/auth/*").permitAll()
-                        .anyRequest().authenticated()
+                http
+                        .sessionManagement(session ->
+                                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .cors(cors -> cors.disable())
+                        .csrf(csrf -> csrf.disable())
+                        .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                        .authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/api/auth/login").permitAll()
+                                .requestMatchers("/api/auth/signup").permitAll()
+                                .anyRequest().authenticated()
 
-                )
-                .build();
+                        )
+                        .build();
     }
 
     @Bean

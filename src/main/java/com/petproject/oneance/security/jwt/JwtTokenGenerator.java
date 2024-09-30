@@ -1,6 +1,7 @@
 package com.petproject.oneance.security.jwt;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,8 @@ public class JwtTokenGenerator {
 
     public String generate(UserDetails user) {
         Instant now = Clock.systemUTC().instant();
+
+
 
         return Jwts.builder()
                 .claim("name", user.getUsername())

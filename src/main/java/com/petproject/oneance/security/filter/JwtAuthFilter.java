@@ -37,9 +37,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 claims = jwtService.validateToken(token.get());
             } catch (Exception e) {
-                filterChain.doFilter(request, response);
                 System.out.println("Token is not verified");
                 e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
             System.out.println("Token verified");

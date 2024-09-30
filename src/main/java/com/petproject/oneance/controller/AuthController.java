@@ -48,6 +48,8 @@ public class AuthController {
         }
     }
 
+
+
     private ResponseEntity<Void> successAuth(AuthorizationResponse header) {
         return ResponseEntity
                     .ok()
