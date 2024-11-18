@@ -32,10 +32,6 @@ public class SecurityConfig {
     }
 
 
-    // cors, csrf api
-    // sessions into repo
-    // remember me
-    // refresh token
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    @Autowired JwtAuthFilter jwtAuthFilter)
